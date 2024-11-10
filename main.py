@@ -41,6 +41,9 @@ def check_resources(drink):
             return False
     return True
 
+def restock(resource_restock, how_much):
+    """Restocks the resources"""
+    resources[resource_restock] += how_much
 
 def make_coffee(drink):
     """Deduct resources for the drink that was ordered."""
@@ -49,6 +52,7 @@ def make_coffee(drink):
     print(f"Here is your {drink}. Enjoy!")
 
 def total_value(total_penny, total_nickel, total_dime, total_quarter):
+    """Get the total that the user paid"""
     total_penny *= 0.01
     total_nickel *= 0.05
     total_dime *= 0.10
@@ -59,6 +63,7 @@ def total_value(total_penny, total_nickel, total_dime, total_quarter):
 
 
 def coins(max_price):
+    """Get how much coins the user inserted and checks if change is needed"""
     total_pennies = int(input("How many pennies? "))
     total_nickels = int(input("How many nickles? "))
     total_dimes = int(input("How many dimes? "))
@@ -77,24 +82,31 @@ def coins(max_price):
 
 
 machine_on = True
-
+safe = 0
 
 while machine_on:
     user_choice = input("What would you like? (espresso/latte/cappuccino): ").lower()
-    cost_of_coffe = MENU[user_choice]["cost"]
+
     if user_choice == "off":
         machine_on = False
         print("Turning off the coffee machine. Goodbye!")
     elif user_choice in MENU:
+        cost_of_coffe = MENU[user_choice]["cost"]
         if check_resources(user_choice):
-            print(f"The price of the {user_choice} is {cost_of_coffe}, insert the coins in the machine:")
+            print(f"The price of the {user_choice} is ${cost_of_coffe}, insert the coins in the machine:")
             if  coins(cost_of_coffe):
                 make_coffee(user_choice)
+                safe = safe + cost_of_coffe
             else:
                 print("Sorry that's not enough money. Money refunded.")
     elif user_choice == "report":
         for item in resources:
             print(f"{item}: {resources[item]}")
+        print(f"Money: ${safe}")
+    elif user_choice == "restock":
+        resource = input("What will be restocked?").lower()
+        value_restock = int(input("How much are you restocking?"))
+        restock(resource, value_restock)
     else:
         print("Invalid input. Please choose from espresso, latte, or cappuccino.")
 
